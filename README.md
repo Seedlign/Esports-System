@@ -1,7 +1,7 @@
 # eSports Player Tracking System
 
 ## Overview
-The **eSports Player Tracking System** is a C++ program designed to manage and analyze player statistics for eSports teams. It provides tools for sorting, searching, and managing player data, enabling coaches and managers to make informed decisions about player performance and team composition.
+The **eSports Player Tracking System** is a C++ program designed to manage and analyze player statistics for eSports teams. It provides tools for sorting, searching, and managing player data, enabling coaches and managers to make informed decisions about player performance and team composition. This also allows supposed players to search and sort their fellow players in a tournament fashion. Another real-life application for this is the utilization for an organization to easily rank and determine the top players in a tournament.
 
 ---
 
