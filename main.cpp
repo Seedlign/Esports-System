@@ -277,18 +277,29 @@ void PlayerScore::AddPlayerToFile(const string& filename) {
     }
 
     Player newPlayer;
-    cout << "Enter Username: ";
-    cin >> newPlayer.PlayerName;
-    cout << "Enter Kills: ";
-    cin >> newPlayer.PlayerKills;
-    cout << "Enter Deaths: ";
-    cin >> newPlayer.PlayerDeaths;
-    cout << "Enter City: ";
-    cin >> newPlayer.PlayerCity;
-    cout << "Enter Region: ";
-    cin >> newPlayer.PlayerRegion;
-    cout << "Enter Tier Points: ";
-    cin >> newPlayer.PlayerTierPoints;
+
+    // Function to handle input with error checking
+    auto getInput = [](const string& prompt, auto& value) {
+        while (true) {
+            cout << prompt;
+            cin >> value;
+            if (cin.fail()) {
+                cin.clear(); 
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+                cout << "Invalid input. Please try again.\n";
+            } else {
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+                break;
+            }
+        }
+    };
+
+    getInput("Enter Username: ", newPlayer.PlayerName);
+    getInput("Enter Kills: ", newPlayer.PlayerKills);
+    getInput("Enter Deaths: ", newPlayer.PlayerDeaths);
+    getInput("Enter City: ", newPlayer.PlayerCity);
+    getInput("Enter Region: ", newPlayer.PlayerRegion);
+    getInput("Enter Tier Points: ", newPlayer.PlayerTierPoints);
 
     file << newPlayer.PlayerName << "|" << newPlayer.PlayerKills << "|"
          << newPlayer.PlayerDeaths << "|" << newPlayer.PlayerCity << "|"
@@ -297,7 +308,6 @@ void PlayerScore::AddPlayerToFile(const string& filename) {
     file.close();
     cout << "Player added successfully!\n";
 }
-
 void PlayerScore::DeletePlayerFromFile(const string& filename, const string& username) {
     vector<Player> players = ReadPlayersFromFile(filename);
     ofstream file(filename);
@@ -344,14 +354,12 @@ void PlayerScore::DisplayMenu() {
         cout << "-------------------------------------" << endl;
         cout << "Enter your choice: ";
 
-        // Validate user input
         if (!(cin >> choice)) {
-            cin.clear();  // Clear the error flag
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input! Please enter a number between 1 and 7.\n";
             continue;
         }
-
 
         switch (choice) {
             case 1:
@@ -361,23 +369,35 @@ void PlayerScore::DisplayMenu() {
                 QuickSort(players, 0, players.size() - 1);
                 cout << "Players sorted by KD Ratio." << endl;
                 break;
-            case 3:
+            case 3: {
                 int sortChoice;
-                cout << "1. Sort by Region & City" << endl;
-                cout << "2. Sort by Tier Points" << endl;
-                cout << "Enter choice: ";
-                cin >> sortChoice;
+                while (true) {
+                    cout << "\nMerge Sort Menu:" << endl;
+                    cout << "1. Sort by Region & City" << endl;
+                    cout << "2. Sort by Tier Points" << endl;
+                    cout << "Enter choice: ";
 
-                if (sortChoice == 1) {
-                    MergeSortByRegionAndCity(players, 0, players.size() - 1);
-                    cout << "Players sorted by Region & City." << endl;
-                } else if (sortChoice == 2) {
-                    MergeSortByTierPoints(players, 0, players.size() - 1);
-                    cout << "Players sorted by Tier Points (0-1000, 1001-2500, 2500+)." << endl;
-                } else {
-                    cout << "Invalid choice." << endl;
+                    if (!(cin >> sortChoice)) {
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        cout << "Invalid input! Please enter 1 or 2.\n";
+                        continue;
+                    }
+
+                    if (sortChoice == 1) {
+                        MergeSortByRegionAndCity(players, 0, players.size() - 1);
+                        cout << "Players sorted by Region & City." << endl;
+                        break;
+                    } else if (sortChoice == 2) {
+                        MergeSortByTierPoints(players, 0, players.size() - 1);
+                        cout << "Players sorted by Tier Points (0-1000, 1001-2500, 2500+)." << endl;
+                        break;
+                    } else {
+                        cout << "Invalid choice. Please enter 1 or 2.\n";
+                    }
                 }
                 break;
+            }
             case 4:
                 SearchPlayerByUsername(players);
                 break;
@@ -387,8 +407,19 @@ void PlayerScore::DisplayMenu() {
                 break;
             case 6: {
                 string username;
-                cout << "Enter username to delete: ";
-                cin >> username;
+                while (true) {
+                    cout << "Enter username to delete: ";
+                    cin >> username;
+
+                    if (cin.fail()) {
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        cout << "Invalid input! Please enter a valid username.\n";
+                    } else {
+                        break;
+                    }
+                }
+
                 DeletePlayerFromFile("Players_200.txt", username);
                 players = ReadPlayersFromFile("Players_200.txt");
                 break;
@@ -399,7 +430,7 @@ void PlayerScore::DisplayMenu() {
             default:
                 cout << "Invalid choice, try again." << endl;
         }
-    } while (true);
+    }
 }
 
 int main() {
